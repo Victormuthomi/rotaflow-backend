@@ -1,32 +1,109 @@
 const express = require("express");
 const router = express.Router();
-const employeeController = require("../controllers/employee.controller");
+const employerController = require("../controllers/employer.controller");
 
 /**
  * @swagger
- * /api/employees/register:
+ * /api/employers:
  *   post:
- *     summary: Register a new employee
- *     tags: [Employees]
+ *     summary: Register a new employer (create employer account)
+ *     tags: [Employers]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - phoneNumber
+ *               - nationalId
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Acme Corp"
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "+1234567890"
+ *               nationalId:
+ *                 type: string
+ *                 example: "12345678"
+ *               email:
+ *                 type: string
+ *                 example: "contact@acmecorp.com"
  */
-router.post("/register", employeeController.registerEmployee);
+router.post("/", employerController.createEmployer);
 
 /**
  * @swagger
- * /api/employees/employer/{employerId}:
+ * /api/employers:
  *   get:
- *     summary: Get all employees for a specific employer
- *     tags: [Employees]
+ *     summary: Get all registered employers
+ *     tags: [Employers]
  */
-router.get("/employer/:employerId", employeeController.getEmployeesByEmployer);
+router.get("/", employerController.getAllEmployers);
 
 /**
  * @swagger
- * /api/employees/{id}:
+ * /api/employers/{id}:
  *   get:
- *     summary: Get single employee by ID
- *     tags: [Employees]
+ *     summary: Get employer details by ID
+ *     tags: [Employers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Employer ID
+ *         schema:
+ *           type: string
  */
-router.get("/:id", employeeController.getEmployeeById);
+router.get("/:id", employerController.getEmployerById);
+
+/**
+ * @swagger
+ * /api/employers/{id}:
+ *   put:
+ *     summary: Update employer details by ID
+ *     tags: [Employers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Employer ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *               nationalId:
+ *                 type: string
+ *               email:
+ *                 type: string
+ */
+router.put("/:id", employerController.updateEmployer);
+
+/**
+ * @swagger
+ * /api/employers/{id}:
+ *   delete:
+ *     summary: Delete employer account by ID
+ *     tags: [Employers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Employer ID
+ *         schema:
+ *           type: string
+ */
+router.delete("/:id", employerController.deleteEmployer);
 
 module.exports = router;

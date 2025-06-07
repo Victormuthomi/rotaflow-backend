@@ -10,12 +10,12 @@ const PORT = process.env.PORT || 5000;
 // DB with models loaded
 const db = require("./models");
 
-//routes
-app.use("/api", routes);
-
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// routes
+app.use("/api", routes);
 
 // Swagger Docs
 require("./swagger/swagger")(app);
