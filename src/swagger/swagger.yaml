@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  title: Rotaflow API
+  description: API documentation for Rotaflow Employee Scheduling System
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+
+paths:
+  /:
+    get:
+      summary: Welcome route
+      responses:
+        "200":
+          description: Backend status
