@@ -5,8 +5,8 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// DB Connection
-const sequelize = require("./config/db");
+// DB with models loaded
+const db = require("./models");
 
 // Middleware
 app.use(cors());
@@ -15,23 +15,21 @@ app.use(express.json());
 // Swagger Docs
 require("./swagger/swagger")(app);
 
-// Example route
+// Test route
 app.get("/", (req, res) => {
   res.send("Rotaflow backend is running.");
 });
 
-// Start server after DB connection
-sequelize
-  .authenticate()
+// Sync DB and start server
+db.sequelize
+  .sync({ alter: true }) // You can use { force: true } for dev resets
   .then(() => {
-    console.log("✅ Database connected successfully.");
+    console.log("✅ Database connected and all models synced.");
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(
-        `📄 Swagger docs available at http://localhost:${PORT}/api-docs`,
-      );
+      console.log(`📄 Swagger docs: http://localhost:${PORT}/api-docs`);
     });
   })
   .catch((err) => {
-    console.error("❌ Unable to connect to the database:", err);
+    console.error("❌ DB connection failed:", err);
   });
