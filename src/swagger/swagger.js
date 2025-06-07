@@ -1,9 +1,21 @@
+const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
-const YAML = require("yamljs");
 const path = require("path");
 
-const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Rotaflow API",
+      version: "1.0.0",
+    },
+  },
+  // Make sure this glob matches your route files where you write JSDoc comments
+  apis: [path.join(__dirname, "../routes/*.js")],
+};
+
+const specs = swaggerJsdoc(options);
 
 module.exports = (app) => {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 };
