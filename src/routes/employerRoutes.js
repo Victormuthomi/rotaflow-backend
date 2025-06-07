@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const employerController = require("../controllers/employer.controller");
+const employerController = require("../controllers/employerController");
 
 /**
  * @swagger
