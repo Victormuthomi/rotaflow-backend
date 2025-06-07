@@ -3,9 +3,9 @@ const { Employer } = require("../models");
 // Create/Register a new employer
 exports.createEmployer = async (req, res) => {
   try {
-    const { name, phoneNumber, nationalId, email } = req.body;
+    const { fullName, phoneNumber, nationalId, email, password } = req.body;
 
-    if (!name || !phoneNumber || !nationalId) {
+    if (!fullName || !phoneNumber || !nationalId || !password) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -15,10 +15,11 @@ exports.createEmployer = async (req, res) => {
     }
 
     const newEmployer = await Employer.create({
-      name,
+      fullName,
       phoneNumber,
       nationalId,
       email,
+      password,
     });
 
     res.status(201).json(newEmployer);
@@ -60,14 +61,20 @@ exports.getEmployerById = async (req, res) => {
 exports.updateEmployer = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, phoneNumber, nationalId, email } = req.body;
+    const { fullName, phoneNumber, nationalId, email, password } = req.body;
 
     const employer = await Employer.findByPk(id);
     if (!employer) {
       return res.status(404).json({ message: "Employer not found" });
     }
 
-    await employer.update({ name, phoneNumber, nationalId, email });
+    await employer.update({
+      fullName,
+      phoneNumber,
+      nationalId,
+      email,
+      password,
+    });
 
     res.json(employer);
   } catch (error) {
