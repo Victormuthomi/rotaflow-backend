@@ -2,11 +2,16 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const routes = require("./routes");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // DB with models loaded
 const db = require("./models");
+
+//routes
+app.use("/api", routes);
 
 // Middleware
 app.use(cors());
