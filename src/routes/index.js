@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const employerRoutes = require("./employerRoutes");
-// TODO: add other route files here
-
-router.use("/employers", employerRoutes);
+router.use("/employers", require("./employerRoutes"));
+router.use("/employees", require("./employeeRoutes"));
+router.use("/departments", require("./departmentRoutes"));
+router.use("/organizations", require("./organizationRoutes"));
 
 module.exports = router;

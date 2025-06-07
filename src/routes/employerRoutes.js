@@ -1,12 +1,32 @@
 const express = require("express");
 const router = express.Router();
-const employerController = require("../controllers/employer.controller");
-const { validateEmployer } = require("../middleware/validation.middleware");
+const employeeController = require("../controllers/employee.controller");
 
-// Employer registration
-router.post("/register", validateEmployer, employerController.registerEmployer);
+/**
+ * @swagger
+ * /api/employees/register:
+ *   post:
+ *     summary: Register a new employee
+ *     tags: [Employees]
+ */
+router.post("/register", employeeController.registerEmployee);
 
-// Get all employers
-router.get("/", employerController.getAllEmployers);
+/**
+ * @swagger
+ * /api/employees/employer/{employerId}:
+ *   get:
+ *     summary: Get all employees for a specific employer
+ *     tags: [Employees]
+ */
+router.get("/employer/:employerId", employeeController.getEmployeesByEmployer);
+
+/**
+ * @swagger
+ * /api/employees/{id}:
+ *   get:
+ *     summary: Get single employee by ID
+ *     tags: [Employees]
+ */
+router.get("/:id", employeeController.getEmployeeById);
 
 module.exports = router;
