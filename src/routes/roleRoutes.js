@@ -16,7 +16,22 @@ const roleController = require("../controllers/roleController");
  *   post:
  *     summary: Create a new role for an employer
  *     tags: [Roles]
- *     ...
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The employer's ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Role'
+ *     responses:
+ *       201:
+ *         description: Role created successfully
  */
 router.post("/", roleController.createRole);
 
@@ -26,7 +41,22 @@ router.post("/", roleController.createRole);
  *   get:
  *     summary: Get all roles for an employer
  *     tags: [Roles]
- *     ...
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The employer's ID
+ *     responses:
+ *       200:
+ *         description: A list of roles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Role'
  */
 router.get("/", roleController.getRoles);
 
@@ -36,7 +66,28 @@ router.get("/", roleController.getRoles);
  *   put:
  *     summary: Update a role by ID
  *     tags: [Roles]
- *     ...
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The employer's ID
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Role ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Role'
+ *     responses:
+ *       200:
+ *         description: Role updated successfully
  */
 router.put("/:id", roleController.updateRole);
 
@@ -46,7 +97,22 @@ router.put("/:id", roleController.updateRole);
  *   delete:
  *     summary: Delete a role by ID
  *     tags: [Roles]
- *     ...
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The employer's ID
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Role ID
+ *     responses:
+ *       204:
+ *         description: Role deleted successfully
  */
 router.delete("/:id", roleController.deleteRole);
 
@@ -58,6 +124,9 @@ module.exports = router;
  *   schemas:
  *     Role:
  *       type: object
+ *       required:
+ *         - name
+ *         - employerId
  *       properties:
  *         id:
  *           type: string
@@ -65,7 +134,7 @@ module.exports = router;
  *           example: "a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78"
  *         name:
  *           type: string
- *           example: "manager"
+ *           example: "Manager"
  *         description:
  *           type: string
  *           example: "Manages a team of employees"
