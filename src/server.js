@@ -5,26 +5,22 @@ require("dotenv").config();
 const routes = require("./routes");
 
 const app = express();
+
+// ✅ Correct and ONLY CORS middleware setup
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend port
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );
 
-const PORT = process.env.PORT || 5000;
-
-// DB with models loaded
-const db = require("./models");
-
-// Middleware
-app.use(cors());
+// ✅ Make sure body parser is after CORS and before routes
 app.use(express.json());
 
-// routes
+// Routes
 app.use("/api", routes);
 
-// Swagger Docs
+// Swagger
 require("./swagger/swagger")(app);
 
 // Test route
@@ -32,9 +28,13 @@ app.get("/", (req, res) => {
   res.send("Rotaflow backend is running.");
 });
 
-// Sync DB and start server
+// DB
+const db = require("./models");
+
+const PORT = process.env.PORT || 5000;
+
 db.sequelize
-  .sync({ alter: true }) // You can use { force: true } for dev resets
+  .sync({ alter: true })
   .then(() => {
     console.log("✅ Database connected and all models synced.");
     app.listen(PORT, () => {
