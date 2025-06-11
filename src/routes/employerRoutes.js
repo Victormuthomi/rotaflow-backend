@@ -11,7 +11,7 @@ const employerController = require("../controllers/employerController");
 
 /**
  * @swagger
- * /api/employers:
+ * /api/employers/register:
  *   post:
  *     summary: Register a new employer
  *     tags: [Employers]
