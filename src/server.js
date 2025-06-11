@@ -5,6 +5,13 @@ require("dotenv").config();
 const routes = require("./routes");
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend port
+    credentials: true,
+  }),
+);
+
 const PORT = process.env.PORT || 5000;
 
 // DB with models loaded
