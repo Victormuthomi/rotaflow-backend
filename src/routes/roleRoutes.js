@@ -89,6 +89,37 @@ router.get("/", roleController.getRoles);
  *       200:
  *         description: Role updated successfully
  */
+/**
+ * @swagger
+ * /api/employers/{employerId}/roles/{id}:
+ *   get:
+ *     summary: Get a specific role by ID
+ *     tags: [Roles]
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The employer's ID
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The role ID
+ *     responses:
+ *       200:
+ *         description: Role found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Role'
+ *       404:
+ *         description: Role not found
+ */
+router.get("/:id", roleController.getRoleById);
+
 router.put("/:id", roleController.updateRole);
 
 /**

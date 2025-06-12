@@ -29,6 +29,20 @@ exports.getRoles = async (req, res) => {
   }
 };
 
+// Get a single role by id
+exports.getRoleById = async (req, res) => {
+  try {
+    const { employerId, id } = req.params;
+    const role = await Role.findOne({ where: { id, employerId } });
+    if (!role) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+    res.status(200).json(role);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 // Update a role by id
 exports.updateRole = async (req, res) => {
   try {
