@@ -13,7 +13,7 @@ const employeeController = require("../controllers/employeeController");
  * @swagger
  * /api/employers/{employerId}/employees:
  *   post:
- *     summary: Register a new employee under an employer
+ *     summary: Create a new employee under an employer
  *     tags: [Employees]
  *     parameters:
  *       - in: path
@@ -31,50 +31,23 @@ const employeeController = require("../controllers/employeeController");
  *             required:
  *               - name
  *               - nationalId
- *               - role
+ *               - phoneNumber
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Jane Smith"
  *               nationalId:
  *                 type: string
- *                 example: "987654321"
  *               phoneNumber:
  *                 type: string
- *                 example: "+254712345678"
  *               email:
  *                 type: string
- *                 example: "jane@example.com"
- *               role:
+ *               roleId:
  *                 type: string
- *                 example: "manager"
  *     responses:
  *       201:
- *         description: Employee created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 employee:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     nationalId:
- *                       type: string
- *                     phoneNumber:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
- *       404:
- *         description: Employer not found
+ *         description: Employee created
+ *       400:
+ *         description: Invalid input
  *       500:
  *         description: Server error
  */
@@ -84,7 +57,7 @@ router.post("/", employeeController.createEmployee);
  * @swagger
  * /api/employers/{employerId}/employees:
  *   get:
- *     summary: Get all employees for an employer
+ *     summary: Get all employees under an employer
  *     tags: [Employees]
  *     parameters:
  *       - in: path
@@ -111,16 +84,65 @@ router.post("/", employeeController.createEmployee);
  *                     type: string
  *                   phoneNumber:
  *                     type: string
- *                   email:
- *                     type: string
- *                   role:
- *                     type: string
  *       404:
  *         description: Employer not found
  *       500:
  *         description: Server error
  */
 router.get("/", employeeController.getEmployees);
+
+/**
+ * @swagger
+ * /api/employers/{employerId}/employees/{id}:
+ *   get:
+ *     summary: Get a single employee under an employer
+ *     tags: [Employees]
+ *     parameters:
+ *       - in: path
+ *         name: employerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employer ID
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employee ID
+ *     responses:
+ *       200:
+ *         description: Employee details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 nationalId:
+ *                   type: string
+ *                 phoneNumber:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *       404:
+ *         description: Employer or Employee not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id", employeeController.getEmployeeById);
 
 /**
  * @swagger
@@ -150,37 +172,19 @@ router.get("/", employeeController.getEmployees);
  *             properties:
  *               name:
  *                 type: string
+ *               nationalId:
+ *                 type: string
  *               phoneNumber:
  *                 type: string
  *               email:
  *                 type: string
- *               role:
+ *               roleId:
  *                 type: string
  *     responses:
  *       200:
  *         description: Employee updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 employee:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     phoneNumber:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
  *       404:
- *         description: Employee or Employer not found
+ *         description: Employer or Employee not found
  *       500:
  *         description: Server error
  */
@@ -190,7 +194,7 @@ router.put("/:id", employeeController.updateEmployee);
  * @swagger
  * /api/employers/{employerId}/employees/{id}:
  *   delete:
- *     summary: Delete an employee
+ *     summary: Delete an employee under an employer
  *     tags: [Employees]
  *     parameters:
  *       - in: path
@@ -208,15 +212,8 @@ router.put("/:id", employeeController.updateEmployee);
  *     responses:
  *       200:
  *         description: Employee deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       404:
- *         description: Employee or Employer not found
+ *         description: Employer or Employee not found
  *       500:
  *         description: Server error
  */

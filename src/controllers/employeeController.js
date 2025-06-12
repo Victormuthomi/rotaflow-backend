@@ -5,18 +5,16 @@ const Role = require("../models/role");
 exports.createEmployee = async (req, res) => {
   try {
     const employerId = req.params.employerId;
-    const { name, nationalId, phoneNumber, email, roleId } = req.body; // use roleId
+    const { name, nationalId, phoneNumber, email, roleId } = req.body;
 
     const employer = await Employer.findByPk(employerId);
     if (!employer)
       return res.status(404).json({ message: "Employer not found" });
 
-    // Validate roleId if provided
     if (roleId) {
       const foundRole = await Role.findOne({
         where: { id: roleId, employerId },
       });
-
       if (!foundRole) {
         return res
           .status(400)
@@ -61,16 +59,39 @@ exports.getEmployees = async (req, res) => {
   }
 };
 
+exports.getEmployeeById = async (req, res) => {
+  try {
+    const { employerId, id } = req.params;
+    const employer = await Employer.findByPk(employerId);
+    if (!employer)
+      return res.status(404).json({ message: "Employer not found" });
+
+    const employee = await Employee.findOne({
+      where: { id, employerId },
+      include: [
+        { model: Role, as: "role", attributes: ["id", "name", "description"] },
+      ],
+    });
+
+    if (!employee)
+      return res.status(404).json({ message: "Employee not found" });
+
+    res.json(employee);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.updateEmployee = async (req, res) => {
   try {
     const { employerId, id } = req.params;
-    const { roleId, ...otherUpdates } = req.body; // use roleId
+    const { roleId, ...otherUpdates } = req.body;
 
     const employee = await Employee.findOne({ where: { id, employerId } });
     if (!employee)
       return res.status(404).json({ message: "Employee not found" });
 
-    // Validate roleId if provided
     if (roleId) {
       const foundRole = await Role.findOne({
         where: { id: roleId, employerId },
