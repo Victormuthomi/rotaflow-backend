@@ -1,22 +1,36 @@
 const Employee = require("../models/employee");
 const Employer = require("../models/employer");
+const Role = require("../models/role");
 
 exports.createEmployee = async (req, res) => {
   try {
     const employerId = req.params.employerId;
-    const { name, nationalId, phoneNumber, email, role } = req.body;
+    const { name, nationalId, phoneNumber, email, roleId } = req.body; // use roleId
 
     const employer = await Employer.findByPk(employerId);
     if (!employer)
       return res.status(404).json({ message: "Employer not found" });
+
+    // Validate roleId if provided
+    if (roleId) {
+      const foundRole = await Role.findOne({
+        where: { id: roleId, employerId },
+      });
+
+      if (!foundRole) {
+        return res
+          .status(400)
+          .json({ message: "Role not found for this employer" });
+      }
+    }
 
     const employee = await Employee.create({
       name,
       nationalId,
       phoneNumber,
       email,
-      role: role || "employee",
       employerId,
+      roleId,
     });
 
     res.status(201).json({ message: "Employee created", employee });
@@ -33,7 +47,13 @@ exports.getEmployees = async (req, res) => {
     if (!employer)
       return res.status(404).json({ message: "Employer not found" });
 
-    const employees = await Employee.findAll({ where: { employerId } });
+    const employees = await Employee.findAll({
+      where: { employerId },
+      include: [
+        { model: Role, as: "role", attributes: ["id", "name", "description"] },
+      ],
+    });
+
     res.json(employees);
   } catch (error) {
     console.error(error);
@@ -44,13 +64,28 @@ exports.getEmployees = async (req, res) => {
 exports.updateEmployee = async (req, res) => {
   try {
     const { employerId, id } = req.params;
-    const updates = req.body;
+    const { roleId, ...otherUpdates } = req.body; // use roleId
 
     const employee = await Employee.findOne({ where: { id, employerId } });
     if (!employee)
       return res.status(404).json({ message: "Employee not found" });
 
-    await employee.update(updates);
+    // Validate roleId if provided
+    if (roleId) {
+      const foundRole = await Role.findOne({
+        where: { id: roleId, employerId },
+      });
+
+      if (!foundRole) {
+        return res
+          .status(400)
+          .json({ message: "Role not found for this employer" });
+      }
+
+      otherUpdates.roleId = roleId;
+    }
+
+    await employee.update(otherUpdates);
 
     res.json({ message: "Employee updated", employee });
   } catch (error) {

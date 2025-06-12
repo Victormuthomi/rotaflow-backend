@@ -65,6 +65,16 @@ const generateMonthlySchedule = async (req, res) => {
   }
 };
 
+exports.getScheduleSummary = async (req, res) => {
+  try {
+    // You can later use req.params.id to filter by employer if needed
+    res.json({ message: "Go to /schedules to generate a schedule" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   generateMonthlySchedule,
 };
