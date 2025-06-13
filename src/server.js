@@ -7,9 +7,20 @@ const routes = require("./routes");
 const app = express();
 
 // ✅ Correct and ONLY CORS middleware setup
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://rotaflow-frontend.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
