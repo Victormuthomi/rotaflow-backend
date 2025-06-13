@@ -38,6 +38,7 @@ exports.createEmployer = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create new employer
     const employer = await Employer.create({
       name,
       nationalId,
@@ -48,12 +49,22 @@ exports.createEmployer = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res
-      .status(201)
-      .json({
-        message: "Employer registered successfully",
-        employerId: employer.id,
-      });
+    // Create token
+    const token = jwt.sign({ employerId: employer.id }, JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // Send back token and employer data
+    return res.status(201).json({
+      token,
+      id: employer.id,
+      name: employer.name,
+      nationalId: employer.nationalId,
+      phoneNumber: employer.phoneNumber,
+      email: employer.email,
+      organizationName: employer.organizationName,
+      departmentName: employer.departmentName,
+    });
   } catch (error) {
     console.error("Error creating employer:", error);
     res.status(500).json({ message: "Server error" });
@@ -64,6 +75,7 @@ exports.createEmployer = async (req, res) => {
 exports.loginEmployer = async (req, res) => {
   try {
     const { nationalId, password } = req.body;
+
     if (!nationalId || !password) {
       return res
         .status(400)
@@ -71,12 +83,14 @@ exports.loginEmployer = async (req, res) => {
     }
 
     const employer = await Employer.findOne({ where: { nationalId } });
-    if (!employer)
+    if (!employer) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const passwordMatch = await bcrypt.compare(password, employer.password);
-    if (!passwordMatch)
+    if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     // Generate JWT
     const token = jwt.sign(
@@ -85,14 +99,19 @@ exports.loginEmployer = async (req, res) => {
       { expiresIn: "8h" },
     );
 
-    res.json({ token });
+    // ✅ Send exactly what register sends
+    return res.status(200).json({
+      message: "Employer logged in successfully",
+      employerId: employer.id,
+      token: token,
+    });
   } catch (error) {
     console.error("Error logging in employer:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get all employers (optional - admin only normally)
+// Get all employers
 exports.getAllEmployers = async (req, res) => {
   try {
     const employers = await Employer.findAll({
