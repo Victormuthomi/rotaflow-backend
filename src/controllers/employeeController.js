@@ -117,18 +117,12 @@ exports.updateEmployee = async (req, res) => {
 
 exports.deleteEmployee = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const employerData = req.headers["x-employer-id"]; // same way frontend should send it
-    if (!employerData) {
-      return res
-        .status(400)
-        .json({ message: "Missing employer ID in headers" });
-    }
+    const { employerId, id } = req.params;
 
     const employee = await Employee.findOne({
-      where: { id, employerId: employerData },
+      where: { id, employerId },
     });
+
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }
