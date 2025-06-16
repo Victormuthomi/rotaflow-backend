@@ -124,7 +124,6 @@ exports.deleteEmployee = async (req, res) => {
       return res.status(404).json({ message: "Employee not found" });
 
     await employee.destroy();
-
     res.json({ message: "Employee deleted" });
   } catch (error) {
     console.error(error);
