@@ -217,9 +217,6 @@ router.put("/:id", employeeController.updateEmployee);
  *       500:
  *         description: Server error
  */
-router.delete(
-  "/employers/:employerId/employees/:id",
-  employeeController.deleteEmployee,
-);
+router.delete("/:id", employeeController.deleteEmployee);
 
 module.exports = router;
