@@ -26,23 +26,30 @@ const Employee = db.define("Employee", {
     unique: true,
     allowNull: true,
   },
-  // Remove role string field
   roleId: {
     type: DataTypes.UUID,
-    allowNull: true, // can start null, until employer assigns
+    allowNull: true,
     references: {
       model: Role,
       key: "id",
     },
   },
+  employerId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: Employer,
+      key: "id",
+    },
+  },
 });
 
+// Associations
 Employee.belongsTo(Employer, {
   foreignKey: "employerId",
   onDelete: "CASCADE",
 });
 
-// New association: Employee belongs to Role
 Employee.belongsTo(Role, {
   foreignKey: "roleId",
   as: "role",
