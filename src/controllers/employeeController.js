@@ -119,15 +119,17 @@ exports.deleteEmployee = async (req, res) => {
   try {
     const { employerId, id } = req.params;
 
-    const employee = await Employee.findOne({
-      where: { id, employerId },
-    });
-
+    const employee = await Employee.findOne({ where: { id, employerId } });
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }
 
+    // First delete schedules associated with this employee
+    await Schedule.destroy({ where: { employeeId: id } });
+
+    // Then delete the employee
     await employee.destroy();
+
     res.status(200).json({ message: "Employee deleted" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
