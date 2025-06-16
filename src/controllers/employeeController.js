@@ -117,16 +117,25 @@ exports.updateEmployee = async (req, res) => {
 
 exports.deleteEmployee = async (req, res) => {
   try {
-    const { employerId, id } = req.params;
+    const { id } = req.params;
 
-    const employee = await Employee.findOne({ where: { id, employerId } });
-    if (!employee)
+    const employerData = req.headers["x-employer-id"]; // same way frontend should send it
+    if (!employerData) {
+      return res
+        .status(400)
+        .json({ message: "Missing employer ID in headers" });
+    }
+
+    const employee = await Employee.findOne({
+      where: { id, employerId: employerData },
+    });
+    if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
+    }
 
     await employee.destroy();
-    res.json({ message: "Employee deleted" });
+    res.status(200).json({ message: "Employee deleted" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
