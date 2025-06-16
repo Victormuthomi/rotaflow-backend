@@ -116,20 +116,39 @@ exports.updateEmployee = async (req, res) => {
 };
 
 exports.deleteEmployee = async (req, res) => {
-  try {
-    const { employerId, id } = req.params;
+  const transaction = await db.transaction(); // Start transaction
 
-    const employee = await Employee.findOne({
-      where: { id, employerId },
+  try {
+    const { id, employerId } = req.params;
+
+    // 1. First delete all schedules
+    await Schedule.destroy({
+      where: { employee_id: id },
+      transaction,
     });
 
-    if (!employee) {
+    // 2. Then delete the employee
+    const result = await Employee.destroy({
+      where: {
+        id,
+        employer_id: employerId,
+      },
+      transaction,
+    });
+
+    if (result === 0) {
+      await transaction.rollback();
       return res.status(404).json({ message: "Employee not found" });
     }
 
-    await employee.destroy();
-    res.status(200).json({ message: "Employee deleted" });
+    await transaction.commit();
+    res.status(204).end();
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    await transaction.rollback();
+    console.error("Delete error:", error);
+    res.status(500).json({
+      message: "Deletion failed",
+      error: error.message,
+    });
   }
 };
