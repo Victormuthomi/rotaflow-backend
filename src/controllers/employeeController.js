@@ -1,6 +1,7 @@
 const Employee = require("../models/employee");
 const Employer = require("../models/employer");
 const Role = require("../models/role");
+const Schedule = require("../models/schedule");
 
 exports.createEmployee = async (req, res) => {
   try {
