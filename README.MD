@@ -64,7 +64,9 @@ cd rotaflow
 
 # Start services with Docker Compose
 docker-compose up --build
+```
 ----
+
 ## 🔑 Environment Variables
 
 Rotaflow uses environment variables for configuration.  
