@@ -77,6 +77,7 @@ Create a `.env` file in the project root or update your Docker Compose configura
 PORT=5000
 DB_URL=postgres://username:password@localhost:5432/rotaflow
 JWT_SECRET=your_jwt_secret_key
+```
 ---
 ## 📖 API Documentation
 
